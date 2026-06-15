@@ -1,0 +1,64 @@
+@model IEnumerable<ShopSphere.MVC.Models.ProductViewModel>
+@{
+    ViewData["Title"] = "Products";
+}
+
+<!-- Page Header -->
+<div class="row mt-4 mb-5 animate-slide-up">
+    <div class="col-12 text-center">
+        <h2 class="display-5 fw-bold text-gradient mb-3">@(ViewBag.CategoryName != null ? $"Explore: {ViewBag.CategoryName}" : "Explore Products")</h2>
+        <p class="lead text-muted opacity-75 mx-auto" style="max-width: 600px;">
+            @(ViewBag.CategoryName != null ? $"تسوق أفضل منتجات قسم {ViewBag.CategoryName} المتاحة لدينا بأسعار ممتازة." : "Discover our highly curated collection of next-generation gadgets and premium tech.")
+        </p>
+    </div>
+</div>
+
+<!-- Product Grid -->
+<div class="row g-4 mb-5 animate-slide-up" style="animation-delay: 0.1s;">
+    @if (Model != null && Model.Any())
+    {
+        foreach (var product in Model)
+        {
+            <div class="col-xl-3 col-lg-4 col-md-6">
+                <div class="card card-modern h-100 position-relative border-0 shadow-sm" style="border-radius: 1rem;">
+                    <div class="position-relative overflow-hidden" style="height: 260px; background-color: rgba(255,255,255,0.02); border-radius: 1rem 1rem 0 0;">
+                        <img src="@(!string.IsNullOrEmpty(product.ImageUrl) ? product.ImageUrl : "https://plus.unsplash.com/premium_photo-1679513691474-73102089c117?q=80&w=800&auto=format&fit=crop")" alt="@product.Name" class="w-100 h-100 object-fit-cover opacity-75">
+                        <div class="position-absolute w-100 h-100 top-0 start-0 d-flex align-items-center justify-content-center bg-dark bg-opacity-50 opacity-0 transition-opacity" style="transition: opacity 0.3s; cursor: pointer;" onmouseover="this.classList.remove('opacity-0')" onmouseout="this.classList.add('opacity-0')">
+                            <button class="btn btn-light rounded-circle shadow-sm mx-1 text-dark" title="Quick View" style="width: 45px; height: 45px;" onclick="window.location.href='/Product/Details/@product.Id'"><i class="fa-solid fa-eye"></i></button>
+                            <button class="btn btn-light rounded-circle shadow-sm mx-1 text-danger" title="Add to Wishlist" style="width: 45px; height: 45px;" onclick="event.stopPropagation(); showToast('Added to Wishlist', 'Product added to your wishlist!')"><i class="fa-solid fa-heart"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="badge bg-secondary opacity-75 fw-normal rounded-pill">@(product.Category?.Name ?? "Electronics")</span>
+                            <div class="text-warning small fw-bold"><i class="fa-solid fa-star"></i> 4.9</div>
+                        </div>
+                        <a href="/Product/Details/@product.Id" class="text-decoration-none text-white">
+                            <h5 class="card-title fw-bold mb-3 line-clamp-2">@product.Name</h5>
+                        </a>
+                        
+                        <div class="mt-auto d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="fs-4 fw-bold text-gradient">$@product.Price.ToString("F2")</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <button class="btn btn-modern rounded-circle d-flex align-items-center justify-content-center shadow-none p-0" style="width: 45px; height: 45px;" onclick="window.location.href='/Product/Details/@product.Id'">
+                                    <i class="fa-solid fa-cart-shopping"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12 text-center text-muted py-5 mt-4">
+            <i class="fa-solid fa-box-open fs-1 text-secondary mb-3 opacity-50"></i>
+            <h5>No products available in this category right now.</h5>
+            <a href="/Category" class="btn btn-modern px-4 mt-3 rounded-pill fw-bold">Explore Other Categories</a>
+        </div>
+    }
+</div>

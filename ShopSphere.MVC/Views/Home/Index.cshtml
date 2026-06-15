@@ -1,0 +1,162 @@
+@model ShopSphere.MVC.Models.HomeViewModel
+@{
+    ViewData["Title"] = "Discover Future Tech";
+}
+
+<!-- Hero Banner (Tri-Gradient) -->
+<div class="row mb-5 align-items-center rounded-4 overflow-hidden position-relative hero-section animate-fade-in" style="min-height: 520px;">
+    <div class="col-lg-6 p-5 z-2 position-relative hero-content ps-lg-5">
+        <span class="badge px-3 py-2 fw-bold text-white mb-3" style="background: var(--gradient-primary); border-radius: 50rem; box-shadow: var(--shadow-glow);">Future Tech 2026</span>
+        <h1 class="display-3 mb-4 fw-bold" style="letter-spacing: -2px; line-height: 1.1;">Your Ultimate Online<br>Shopping Destination.</h1>
+        <p class="lead mb-5 opacity-75" style="max-width: 85%;">Step into the ultimate shopping experience. Discover premium products delivered straight to your door.</p>
+        <div class="d-flex gap-3 flex-wrap">
+            <a href="#trending" class="btn btn-modern btn-lg fw-bold px-5">Shop Now</a>
+            <a href="/Category" class="btn btn-modern-outline btn-lg fw-bold px-5"><i class="fa-solid fa-play me-2"></i>Categories</a>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <a href="@(User.IsInRole("Admin") ? "/Admin/Dashboard" : "/User/Dashboard")" class="btn btn-modern-outline btn-lg fw-bold px-5">
+                    <i class="fa-solid @(User.IsInRole("Admin") ? "fa-shield-halved" : "fa-route") me-2"></i>Dashboard
+                </a>
+            }
+        </div>
+    </div>
+    <div class="col-lg-6 position-relative h-100 d-none d-lg-block d-flex align-items-center justify-content-center">
+        <div class="hero-blob-1" style="position: absolute; right: 0; top: -50px; width: 450px; height: 450px; border-radius: 50%; filter: blur(80px);"></div>
+        <div class="hero-blob-2" style="position: absolute; right: 150px; bottom: -80px; width: 350px; height: 350px; border-radius: 50%; filter: blur(90px);"></div>
+        
+        <!-- Creative Tech Universe Logo -->
+        <div class="hero-logo-container position-absolute end-0 top-50 translate-middle-y me-5">
+            <!-- Glow Rings -->
+            <div class="position-absolute rounded-circle border opacity-25" style="width: 260px; height: 260px; border-width: 2px !important; border-color: var(--primary) !important;"></div>
+            <div class="position-absolute rounded-circle border opacity-25" style="width: 360px; height: 360px; border-width: 1px !important; border-style: dashed !important; border-color: var(--secondary) !important; animation: orbit1 40s linear infinite;"></div>
+            <div class="position-absolute rounded-circle border opacity-10" style="width: 460px; height: 460px; border-width: 1px !important; border-color: var(--tertiary) !important;"></div>
+
+            <!-- Main Glowing Gem -->
+            <i class="fa-solid fa-gem hero-main-icon"></i>
+            
+            <!-- Orbiting Tech Icons -->
+            <i class="fa-solid fa-microchip hero-orbit-icon orbit-1"></i>
+            <i class="fa-solid fa-vr-cardboard hero-orbit-icon orbit-2"></i>
+            <i class="fa-solid fa-mobile-screen hero-orbit-icon orbit-3"></i>
+            <i class="fa-solid fa-laptop-code hero-orbit-icon" style="animation: orbit1 18s linear infinite reverse; color: var(--warning); font-size: 2rem;"></i>
+            <i class="fa-brands fa-bluetooth hero-orbit-icon" style="animation: orbit2 22s linear infinite reverse; color: #0ea5e9; font-size: 2.2rem;"></i>
+        </div>
+    </div>
+</div>
+
+<!-- Brands -->
+<div class="row mb-5 justify-content-center opacity-50 px-4 g-4 animate-slide-up" style="animation-delay: 0.1s;">
+    @foreach(var brand in new[] {"fa-apple", "fa-microsoft", "fa-amazon", "fa-google", "fa-stripe"}) {
+        <div class="col-auto"><i class="fa-brands @brand fs-3 text-muted"></i></div>
+    }
+</div>
+
+<!-- Categories Section -->
+<div class="row mb-4 align-items-end animate-slide-up" style="animation-delay: 0.15s;">
+    <div class="col-12">
+        <h2 class="fw-bold mb-1"><i class="fa-solid fa-layer-group text-primary me-2"></i>Shop by Category</h2>
+        <p class="text-muted mb-0">Explore our wide range of product categories.</p>
+    </div>
+</div>
+
+<div class="row g-4 mb-5 animate-slide-up" style="animation-delay: 0.18s;">
+    @if (Model?.Categories != null && Model.Categories.Any(c => c.ParentCategoryId == null))
+    {
+        var rootCategories = Model.Categories.Where(c => c.ParentCategoryId == null);
+        foreach (var category in rootCategories)
+        {
+            var imageUrl = category.GetDisplayImageUrl();
+            
+            <div class="col-lg-3 col-md-4 col-sm-6 text-center">
+                <a href="/Product?categoryId=@category.Id" class="text-decoration-none">
+                    <div class="card card-modern border-0 overflow-hidden position-relative" style="height: 250px; border-radius: 1rem;">
+                        <img src="@imageUrl" class="w-100 h-100 object-fit-cover opacity-75 hover-opacity-100 transition-opacity" style="transition: transform 0.4s ease;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                        <div class="position-absolute bottom-0 start-0 w-100 p-3" style="background: linear-gradient(to top, rgba(15,23,42,0.95), transparent);">
+                            <h5 class="fw-bold text-white mb-1">@category.Name</h5>
+                            <span class="text-primary small fw-bold" style="font-size: 0.8rem;">Explore <i class="fa-solid fa-arrow-right ms-1"></i></span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+    }
+</div>
+
+<!-- Trending Section -->
+<div id="trending" class="row mb-4 align-items-end animate-slide-up" style="animation-delay: 0.2s;">
+    <div class="col-md-8">
+        <h2 class="fw-bold mb-1"><i class="fa-solid fa-fire text-danger me-2"></i>Trending Now</h2>
+        <p class="text-muted mb-0">The absolute highest rated gadgets this week.</p>
+    </div>
+    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+        <a href="/?view=trending" class="btn btn-link text-primary text-decoration-none fw-bold">View All <i class="fa-solid fa-arrow-right ms-1"></i></a>
+    </div>
+</div>
+
+<!-- Trending Grid -->
+<div class="row g-4 mb-5 animate-slide-up" style="animation-delay: 0.3s;">
+    @if (Model?.FeaturedProducts != null && Model.FeaturedProducts.Any())
+    {
+        foreach (var product in Model.FeaturedProducts)
+        {
+            <div class="col-xl-3 col-lg-4 col-md-6">
+                <div class="card card-modern h-100 position-relative">
+                    <div class="position-relative overflow-hidden" style="height: 260px; background-color: rgba(255,255,255,0.02);">
+                        <img src="@(!string.IsNullOrEmpty(product.ImageUrl) ? product.ImageUrl : "https://plus.unsplash.com/premium_photo-1679513691474-73102089c117?q=80&w=800&auto=format&fit=crop")" alt="@product.Name" class="w-100 h-100 object-fit-cover opacity-75">
+                        <div class="position-absolute w-100 h-100 top-0 start-0 d-flex align-items-center justify-content-center bg-dark bg-opacity-50 opacity-0 transition-opacity" style="transition: opacity 0.3s; cursor: pointer;" onmouseover="this.classList.remove('opacity-0')" onmouseout="this.classList.add('opacity-0')">
+                            <button class="btn btn-light rounded-circle shadow-sm mx-1 text-dark" title="Quick View" style="width: 45px; height: 45px;" onclick="window.location.href='/Product/Details/@product.Id'"><i class="fa-solid fa-eye"></i></button>
+                            <button class="btn btn-light rounded-circle shadow-sm mx-1 text-danger" title="Add to Wishlist" style="width: 45px; height: 45px;" onclick="event.stopPropagation(); showToast('Added to Wishlist', 'Product added to your wishlist!')"><i class="fa-solid fa-heart"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="badge bg-secondary opacity-75 fw-normal rounded-pill">@(product.Category?.Name ?? "Electronics")</span>
+                            <div class="text-warning small fw-bold"><i class="fa-solid fa-star"></i> 4.9</div>
+                        </div>
+                        <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id" class="text-decoration-none text-white">
+                            <h5 class="card-title fw-bold mb-3 line-clamp-2">@product.Name</h5>
+                        </a>
+                        
+                        <div class="mt-auto d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="fs-4 fw-bold text-gradient">$@product.Price.ToString("F2")</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <button class="btn btn-modern rounded-circle d-flex align-items-center justify-content-center shadow-none p-0" style="width: 45px; height: 45px;" onclick="window.location.href='/Product/Details/@product.Id'">
+                                    <i class="fa-solid fa-cart-shopping"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+<!-- New Arrivals Promo -->
+<div class="row mb-5 animate-slide-up" style="animation-delay: 0.4s;">
+    @if (Model?.FeaturedProducts != null && Model.FeaturedProducts.Any())
+    {
+        var promoProduct = Model.FeaturedProducts.FirstOrDefault();
+        if (promoProduct != null)
+        {
+            <div class="col-12">
+                <div class="card card-modern border-0 overflow-hidden" style="background: radial-gradient(circle at center, rgba(139, 92, 246, 0.2), var(--background));">
+                    <div class="card-body p-5 p-lg-5 row align-items-center">
+                        <div class="col-lg-7 text-center text-lg-start mb-4 mb-lg-0">
+                            <span class="badge bg-success mb-3 px-3 py-2 fw-bold rounded-pill">Available Now</span>
+                            <h2 class="display-5 fw-bold mb-3 text-white">@promoProduct.Name</h2>
+                            <p class="lead text-muted mb-4 opacity-75">@(string.IsNullOrEmpty(promoProduct.Description) ? "Experience true innovation with this incredible product." : promoProduct.Description)</p>
+                            <a href="/Product/Details/@promoProduct.Id" class="btn btn-modern px-5 py-3 fw-bold rounded-pill">Order Before Sunset</a>
+                        </div>
+                        <div class="col-lg-5 text-center position-relative">
+                           <img src="@(!string.IsNullOrEmpty(promoProduct.ImageUrl) ? promoProduct.ImageUrl : "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=800&auto=format&fit=crop")" class="img-fluid rounded-circle shadow-lg" style="border: 2px solid rgba(139, 92, 246, 0.5); object-fit: cover; width: 300px; height: 300px;" alt="@promoProduct.Name">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>

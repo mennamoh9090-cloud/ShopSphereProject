@@ -1,0 +1,54 @@
+@{
+    ViewData["Title"] = "My Wishlist";
+}
+
+<div class="row mb-5 mt-4">
+    <div class="col-12 text-center text-md-start">
+        <h2 class="fw-bold mb-2 text-gradient"><i class="fa-solid fa-heart me-2 text-danger"></i>My Wishlist</h2>
+        <p class="text-muted">Don't miss out on your favorite items.</p>
+    </div>
+</div>
+
+<div class="row g-4 mb-5">
+    @for (int i = 1; i <= 4; i++)
+    {
+        <div class="col-xl-3 col-lg-4 col-md-6" id="wishlist-item-@i" style="transition: all 0.4s ease;">
+            <div class="card card-modern h-100 position-relative">
+                <button class="btn btn-light rounded-circle shadow-sm position-absolute top-0 end-0 m-3 z-3 text-danger" title="Remove from wishlist" style="width: 40px; height: 40px;" onclick="removeWishlistItem('wishlist-item-@i')">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+                
+                <div class="position-relative overflow-hidden bg-light" style="height: 250px; display: flex; align-items: center; justify-content: center;">
+                    <img src="https://picsum.photos/400/300?random=@(i+20)" alt="Product" class="w-100 h-100 object-fit-cover">
+                </div>
+                
+                <div class="card-body p-4 d-flex flex-column">
+                    <h5 class="card-title fw-bold text-dark mb-2 line-clamp-2">Wishlist Device Model-@(i)</h5>
+                    <div class="fs-5 fw-bold text-primary mb-3">$@((i * 129.99).ToString("F2"))</div>
+                    
+                    <div class="mt-auto">
+                        <button class="btn btn-modern w-100 fw-bold shadow-none" onclick="showToast('Moved to Cart', 'Item successfully mapped to your checkout cart.')">
+                            <i class="fa-solid fa-cart-plus me-2"></i> Move to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        function removeWishlistItem(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.style.transform = 'scale(0.8)';
+                el.style.opacity = '0';
+                setTimeout(() => {
+                    el.remove();
+                    showToast('Removed', 'Item dropped from your wishlist.');
+                }, 400);
+            }
+        }
+    </script>
+}

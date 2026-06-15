@@ -1,0 +1,91 @@
+@model IEnumerable<ShopSphere.MVC.Models.ProductViewModel>
+@{
+    ViewData["Title"] = "Manage Products | Admin";
+}
+
+<div class="row mt-4 animate-slide-up">
+    <!-- Sidebar -->
+    <div class="col-lg-3 mb-4">
+        <div class="card card-modern p-4 text-center border-0 border-bottom border-danger border-4">
+            <div class="rounded-circle bg-dark border border-secondary d-flex align-items-center justify-content-center mx-auto mb-3 shadow" style="width: 80px; height: 80px;">
+                <i class="fa-solid fa-shield-halved fs-1 text-danger"></i>
+            </div>
+            <h5 class="fw-bold text-danger">Root Administrator</h5>
+            <p class="text-muted small">@User.Identity?.Name</p>
+            <hr class="border-secondary opacity-25">
+            <div class="d-grid gap-2 text-start">
+                <a href="/Admin/Dashboard" class="btn btn-modern-outline fw-bold text-start border-0 text-white d-block w-100 text-decoration-none"><i class="fa-solid fa-chart-pie w-20 text-center me-2 text-muted"></i>Overview System</a>
+                <a href="/Admin/ManageProducts" class="btn btn-modern fw-bold text-start d-block w-100 text-decoration-none"><i class="fa-solid fa-box w-20 text-center me-2"></i>Manage Products</a>
+                <a href="/Admin/Categories" class="btn btn-modern-outline fw-bold text-start border-0 text-white d-block w-100 text-decoration-none"><i class="fa-solid fa-layer-group w-20 text-center me-2 text-muted"></i>Categories</a>
+                <a href="/Admin/Users" class="btn btn-modern-outline fw-bold text-start border-0 text-white d-block w-100 text-decoration-none"><i class="fa-solid fa-users-gear w-20 text-center me-2 text-muted"></i>User Accounts</a>
+                <a href="/Admin/Orders" class="btn btn-modern-outline fw-bold text-start border-0 text-white d-block w-100 text-decoration-none"><i class="fa-solid fa-truck-fast w-20 text-center me-2 text-muted"></i>Manage Orders</a>
+                <a href="/Account/Logout" class="btn btn-outline-danger mt-3 fw-bold"><i class="fa-solid fa-right-from-bracket w-20 text-center me-2"></i>Exit Interface</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-lg-9">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold text-white"><i class="fa-solid fa-box me-2 text-primary"></i>Manage Products</h3>
+            <a href="/Admin/AddProduct" class="btn btn-modern fw-bold px-4"><i class="fa-solid fa-plus me-2"></i>Add Product</a>
+        </div>
+
+        <div class="card card-modern border-0">
+            <div class="card-body p-4">
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover align-middle bg-transparent mb-0">
+                        <thead class="text-muted small text-uppercase border-bottom border-secondary">
+                            <tr>
+                                <th class="bg-transparent text-muted">ID</th>
+                                <th class="bg-transparent text-muted">Name</th>
+                                <th class="bg-transparent text-muted">Category</th>
+                                <th class="bg-transparent text-muted">Price</th>
+                                <th class="bg-transparent text-muted text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="border-secondary opacity-75">
+                            @if (Model != null && Model.Any())
+                            {
+                                foreach (var p in Model)
+                                {
+                                    <tr>
+                                        <td class="bg-transparent">@p.Id</td>
+                                        <td class="fw-bold text-white bg-transparent">@p.Name</td>
+                                        <td class="bg-transparent"><span class="badge bg-secondary">@(p.Category?.Name ?? "General")</span></td>
+                                        <td class="fw-bold text-success bg-transparent">$@p.Price.ToString("F2")</td>
+                                        <td class="text-end bg-transparent">
+                                            <a href="/Admin/EditProduct/@p.Id" class="btn btn-sm btn-outline-primary border-0"><i class="fa-solid fa-pencil"></i></a>
+                                            <a href="/Admin/DeleteProduct/@p.Id" class="btn btn-sm btn-outline-danger border-0" onclick="return confirm('Are you sure you want to delete this product?');"><i class="fa-solid fa-trash"></i></a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5" class="bg-transparent text-center text-muted py-4">No products found.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

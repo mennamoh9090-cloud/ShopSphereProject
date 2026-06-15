@@ -1,0 +1,136 @@
+@model ShopSphere.MVC.Models.CartViewModel
+@{
+    ViewData["Title"] = "Your Shopping Cart";
+}
+
+<div class="row mt-4 mb-2 animate-slide-up">
+    <div class="col-12">
+        <h2 class="fw-bold text-gradient mb-1">Shopping Cart</h2>
+        <p class="text-muted">Review your selected items and apply discounts before checking out.</p>
+    </div>
+</div>
+
+<div class="row g-4 mb-5 animate-slide-up" style="animation-delay: 0.1s;">
+    <!-- Cart Items List -->
+    <div class="col-lg-8">
+        @if (Model != null && Model.Items.Any())
+        {
+            var i = 0;
+            foreach (var item in Model.Items)
+            {
+                <div class="card card-modern border-0 mb-3 p-3" id="cart-item-@i" style="transition: all 0.4s ease;">
+                    <div class="row align-items-center">
+                        <div class="col-md-2 col-4">
+                            <div class="rounded-3 overflow-hidden bg-light" style="height: 80px;">
+                                <img src="@(!string.IsNullOrEmpty(item.ImageUrl) ? item.ImageUrl : "https://plus.unsplash.com/premium_photo-1679513691474-73102089c117?q=80&w=800&auto=format&fit=crop")" class="w-100 h-100 object-fit-cover opacity-75" alt="@item.ProductName">
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-8">
+                            <h6 class="fw-bold text-white mb-1">@item.ProductName</h6>
+                            <small class="text-muted d-block">Price: <span class="text-white">$@item.Price.ToString("F2")</span></small>
+                        </div>
+                        <div class="col-md-3 col-6 mt-3 mt-md-0">
+                            <div class="input-group input-group-sm w-75 mx-md-auto">
+                                <button class="btn btn-modern-outline px-2 py-1" type="button" onclick="const q=document.getElementById('cqty-@i'); q.value=Math.max(1,parseInt(q.value)-1)">-</button>
+                                <input type="text" id="cqty-@i" class="form-control form-control-modern text-center fw-bold px-0" value="@item.Quantity" readonly>
+                                <button class="btn btn-modern-outline px-2 py-1" type="button" onclick="const q=document.getElementById('cqty-@i'); q.value=parseInt(q.value)+1">+</button>
+                            </div>
+                        </div>
+                        <div class="col-md-2 col-4 mt-3 mt-md-0 text-center text-md-end">
+                            <span class="fw-bold fs-5 text-success">$@item.Total.ToString("F2")</span>
+                        </div>
+                        <div class="col-md-1 col-2 mt-3 mt-md-0 text-end">
+                            <button class="btn btn-link text-danger p-0 border-0 text-decoration-none" title="Remove" onclick="removeCartItem('cart-item-@i', @item.Id)">
+                                <i class="fa-solid fa-trash-can fs-5"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                i++;
+            }
+        }
+        else
+        {
+            <div class="card card-modern border-0 p-5 text-center">
+                <i class="fa-solid fa-cart-shopping fs-1 text-muted mb-3 opacity-50"></i>
+                <h4 class="text-white fw-bold">Your cart is empty</h4>
+                <p class="text-muted mb-4">Looks like you haven't added anything to your cart yet.</p>
+                <a href="/" class="btn btn-modern px-4 py-2 mx-auto" style="width: fit-content;">Start Shopping</a>
+            </div>
+        }
+    </div>
+
+    <!-- Sticky Summary -->
+    <div class="col-lg-4">
+        <div class="card card-modern border-0 p-4 sticky-top" style="top: 100px; z-index: 10;">
+            <h4 class="fw-bold text-white mb-4">Order Summary</h4>
+            
+            <div class="d-flex justify-content-between mb-3 text-muted">
+                <span>Subtotal (@(Model?.Items.Count ?? 0) items)</span>
+                <span class="text-white fw-bold">$@(Model?.SubTotal.ToString("F2") ?? "0.00")</span>
+            </div>
+            <div class="d-flex justify-content-between mb-3 text-muted">
+                <span>Shipping</span>
+                <span class="text-success fw-bold">Free</span>
+            </div>
+            <div class="d-flex justify-content-between mb-4 text-muted">
+                <span>Taxes (Estimated)</span>
+                <span class="text-white fw-bold">$@(Model?.Tax.ToString("F2") ?? "0.00")</span>
+            </div>
+            
+            <hr class="border-secondary opacity-25 mb-4">
+
+            <div class="mb-4">
+                <label class="form-label text-muted small fw-bold">Coupon Code 🎟</label>
+                <div class="input-group">
+                    <input type="text" class="form-control form-control-modern" placeholder="Enter code">
+                    <button class="btn btn-modern-outline fw-bold px-3" type="button" onclick="showToast('Applied', 'Discount applied successfully!')">Apply</button>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <span class="fw-bold text-white fs-5">Total</span>
+                <span class="fw-bold text-gradient fs-3">$@(Model?.Total.ToString("F2") ?? "0.00")</span>
+            </div>
+
+            <a href="/Checkout" class="btn btn-modern btn-lg w-100 fw-bold shadow-lg">Proceed to Checkout <i class="fa-solid fa-arrow-right ms-2"></i></a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        async function removeCartItem(elementId, cartItemId) {
+            try {
+                const response = await fetch('/Cart/Remove', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ cartItemId: cartItemId })
+                });
+                
+                if (response.ok) {
+                    const el = document.getElementById(elementId);
+                    if(el) {
+                        el.style.opacity = '0';
+                        el.style.transform = 'translateX(-20px)';
+                        setTimeout(() => {
+                            el.remove();
+                            showToast('Item Removed', 'The specific item was deleted from your cart.');
+                            setTimeout(() => window.location.reload(), 1500); // Reload to update totals
+                        }, 400);
+                    }
+                    if (typeof updateCartBadge === 'function') {
+                        updateCartBadge();
+                    }
+                } else {
+                    showToast('Error', 'Failed to remove item', 'error');
+                }
+            } catch (error) {
+                console.error('Error removing item:', error);
+                showToast('Error', 'Network error occurred', 'error');
+            }
+        }
+    </script>
+}

@@ -1,0 +1,153 @@
+@model ShopSphere.MVC.Models.UserDashboardViewModel
+@using Humanizer
+@{
+    ViewData["Title"] = "User Portal";
+}
+
+<div class="row mt-4 mb-5 animate-slide-up">
+    <!-- Sidebar -->
+    <div class="col-lg-3 mb-4">
+        <div class="card card-modern p-4 text-center border-0">
+            <div class="rounded-circle bg-dark d-flex align-items-center justify-content-center mx-auto mb-3 border border-secondary" style="width: 80px; height: 80px; box-shadow: var(--shadow-glow);">
+                <i class="fa-solid fa-user fs-1 text-primary"></i>
+            </div>
+            <h5 class="fw-bold text-white">Welcome Back, @Model.FullName!</h5>
+            <p class="text-muted small">@Model.Email</p>
+            <hr class="border-secondary opacity-25">
+            <div class="d-grid gap-2">
+                <a class="btn btn-modern fw-bold"><i class="fa-solid fa-box-open me-2"></i>My Orders <span class="badge bg-light text-dark ms-2">@Model.ActiveOrdersCount</span></a>
+                <a href="/Wishlist" class="btn btn-modern-outline fw-bold"><i class="fa-solid fa-heart me-2 text-danger"></i>Wishlist <span class="badge bg-danger ms-2">@Model.WishlistItemsCount</span></a>
+                <a class="btn btn-modern-outline fw-bold"><i class="fa-solid fa-shield-halved me-2"></i>Security</a>
+                <a href="/Account/Logout" class="btn btn-outline-danger mt-3 fw-bold border-0"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-lg-9">
+        <h3 class="fw-bold mb-4 text-white"><i class="fa-solid fa-route me-2 text-primary"></i>Order Tracking Timeline</h3>
+        
+        @if (Model.RecentOrders != null && Model.RecentOrders.Any())
+        {
+            foreach (var order in Model.RecentOrders)
+            {
+                bool isFailed = order.PaymentStatus.Equals("Failed", StringComparison.OrdinalIgnoreCase);
+                string status = string.IsNullOrEmpty(order.OrderStatus) ? "Pending" : order.OrderStatus;
+                
+                int progressWidth = status switch {
+                    "Delivered" => 100,
+                    "Shipped" => 75,
+                    "Processing" => 50,
+                    _ => 25
+                };
+
+                string borderColor = isFailed ? "border-danger" : (status == "Delivered" ? "border-success" : "border-warning");
+                string badgeClass = isFailed ? "bg-danger" : (status == "Delivered" ? "bg-success" : "bg-warning text-dark");
+                string statusText = isFailed ? "Failed" : status;
+                string iconClass = isFailed ? "fa-triangle-exclamation" : (status == "Delivered" ? "fa-check-circle" : (status == "Shipped" ? "fa-truck" : "fa-clock"));
+                
+                <div class="card card-modern p-4 mb-4 border-0 border-start border-4 @borderColor">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h5 class="fw-bold mb-0 text-white">Order #ORD-2026-@order.Id.ToString("D5")</h5>
+                            <small class="text-muted">Total: <span class="text-white fw-bold">$@order.TotalPrice.ToString("F2")</span></small>
+                            <br/><small class="text-muted opacity-75">Placed: @order.CreatedAt.Humanize()</small>
+                        </div>
+                        <span class="badge @badgeClass px-3 py-2 rounded-pill fs-6"><i class="fa-solid @iconClass me-1"></i>@statusText</span>
+                    </div>
+                    
+                    @if (isFailed)
+                    {
+                        <p class="text-muted small mb-0"><i class="fa-solid fa-circle-info text-danger me-1"></i> Payment declined or failed. Please retry the payment method.</p>
+                        <div class="mt-3 text-end">
+                            <button class="btn btn-modern-outline btn-sm fw-bold px-4" onclick="window.location.href='/Checkout'">Retry Payment</button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="position-relative px-4 pb-3">
+                            <div class="progress position-absolute top-50 start-0 translate-middle-y w-100" style="height: 4px; background-color: rgba(255,255,255,0.1); z-index: 0;">
+                                <div class="progress-bar @(status == "Delivered" ? "bg-success" : "bg-warning")" role="progressbar" style="width: @progressWidth%" aria-valuenow="@progressWidth" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div class="d-flex justify-content-between position-relative z-1 text-center">
+                                <div>
+                                    <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 30px; height: 30px;"><i class="fa-solid fa-check small"></i></div>
+                                    <span class="small fw-bold text-white">Ordered</span>
+                                </div>
+                                <div>
+                                    <div class="rounded-circle @(progressWidth >= 50 ? (progressWidth == 100 ? "bg-success text-white" : "bg-warning text-dark shadow") : "bg-dark text-muted border border-secondary") d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 30px; height: 30px;"><i class="fa-solid fa-truck-fast small"></i></div>
+                                    <span class="small fw-bold @(progressWidth >= 50 ? (progressWidth == 100 ? "text-success" : "text-warning") : "text-muted")">Processing</span>
+                                </div>
+                                <div>
+                                    <div class="rounded-circle @(progressWidth >= 75 ? (progressWidth == 100 ? "bg-success text-white" : "bg-warning text-dark shadow") : "bg-dark text-muted border border-secondary") d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 30px; height: 30px;"><i class="fa-solid fa-box small"></i></div>
+                                    <span class="small fw-bold @(progressWidth >= 75 ? (progressWidth == 100 ? "text-success" : "text-warning") : "text-muted")">Shipped</span>
+                                </div>
+                                <div>
+                                    <div class="rounded-circle @(progressWidth == 100 ? "bg-success text-white shadow" : "bg-dark text-muted border border-secondary") d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 30px; height: 30px;"><i class="fa-solid fa-house small"></i></div>
+                                    <span class="small fw-bold @(progressWidth == 100 ? "text-success" : "text-muted")">Delivered</span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    
+                    <!-- Items List -->
+                    @if (order.Items != null && order.Items.Any())
+                    {
+                        <hr class="border-secondary opacity-25 my-4">
+                        <h6 class="text-white fw-bold mb-3"><i class="fa-solid fa-box text-primary me-2"></i>Items in this order</h6>
+                        <div class="row g-3">
+                            @foreach(var item in order.Items)
+                            {
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center rounded-3 p-2 bg-dark bg-opacity-25 border border-secondary border-opacity-10 hover-lift">
+                                        <div class="rounded-2 overflow-hidden me-3 bg-light" style="width: 60px; height: 60px;">
+                                            <img src="@(!string.IsNullOrEmpty(item.ImageUrl) ? item.ImageUrl : "https://plus.unsplash.com/premium_photo-1679513691474-73102089c117?q=80&w=800&auto=format&fit=crop")" class="w-100 h-100 object-fit-cover opacity-75" alt="@item.ProductName">
+                                        </div>
+                                        <div>
+                                            <h6 class="text-white fw-bold mb-1 fs-6">@item.ProductName</h6>
+                                            <div class="text-muted small">Qty: @item.Quantity <span class="mx-1">•</span> <span class="text-success fw-bold">$@item.Price.ToString("F2")</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+        }
+        else
+        {
+            <div class="alert alert-dark text-center py-5 border-0 bg-transparent">
+                <i class="fa-solid fa-box-open fs-1 text-muted mb-3 opacity-50"></i>
+                <h5 class="text-white fw-bold">No Orders Yet</h5>
+                <p class="text-muted mb-4 opacity-75">You haven't placed any orders. Start exploring our premium collection.</p>
+                <a href="/?view=all" class="btn btn-modern px-5 rounded-pill fw-bold">Shop Now</a>
+            </div>
+        }
+        
+        <!-- Account Security Widget -->
+        <h4 class="fw-bold mb-4 mt-5 text-white"><i class="fa-solid fa-shield-halved me-2 text-success"></i>Account Security</h4>
+        <div class="card card-modern p-4 mb-4 border-0">
+            <div class="d-flex justify-content-between align-items-center border-bottom border-secondary border-opacity-25 pb-3 mb-3">
+                <div>
+                    <h6 class="fw-bold text-white mb-1">Two-Factor Authentication</h6>
+                    <small class="text-muted">Secure your account with 2FA verification.</small>
+                </div>
+                <div>
+                    <button class="btn btn-sm btn-success fw-bold">Enabled</button>
+                    <button class="btn btn-sm btn-outline-light ms-2">Manage</button>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="fw-bold text-white mb-1">Password Management</h6>
+                    <small class="text-muted">Last changed 45 days ago.</small>
+                </div>
+                <div>
+                    <button class="btn btn-sm btn-modern-outline fw-bold">Update Password</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

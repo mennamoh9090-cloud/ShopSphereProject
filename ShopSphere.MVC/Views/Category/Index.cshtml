@@ -1,0 +1,37 @@
+@model IEnumerable<ShopSphere.MVC.Models.CategoryViewModel>
+@{
+    ViewData["Title"] = "Discover Categories";
+}
+
+<!-- Page Header -->
+<div class="row mt-4 mb-5 animate-slide-up">
+    <div class="col-12 text-center">
+        <h2 class="display-5 fw-bold text-gradient mb-3">Browse by Category</h2>
+        <p class="lead text-muted opacity-75 mx-auto" style="max-width: 600px;">Explore our highly curated collection of next-generation gadgets, meticulously separated into intuitive technological domains.</p>
+    </div>
+</div>
+
+<!-- Category Grid -->
+<div class="row g-4 mb-5 animate-slide-up" style="animation-delay: 0.1s;">
+    @if (Model != null && Model.Any(c => c.ParentCategoryId == null))
+    {
+        var rootCategories = Model.Where(c => c.ParentCategoryId == null);
+        foreach (var category in rootCategories)
+        {
+            var imageUrl = category.GetDisplayImageUrl();
+            
+            <div class="col-lg-4 col-md-6 text-center">
+                <a href="/Product?categoryId=@category.Id" class="text-decoration-none">
+                    <div class="card card-modern border-0 overflow-hidden position-relative" style="height: 350px;">
+                        <img src="@imageUrl" class="w-100 h-100 object-fit-cover opacity-75 hover-opacity-100 transition-opacity" style="transition: transform 0.4s ease;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                        <div class="position-absolute bottom-0 start-0 w-100 p-4" style="background: linear-gradient(to top, rgba(15,23,42,0.9), transparent);">
+                            <h4 class="fw-bold text-white mb-1">@category.Name</h4>
+                            <span class="text-primary small fw-bold">Explore <i class="fa-solid fa-arrow-right ms-1"></i></span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+    }
+</div>
+

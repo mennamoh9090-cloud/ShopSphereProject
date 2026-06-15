@@ -1,0 +1,159 @@
+@model ShopSphere.MVC.Models.AdminDashboardViewModel
+@{
+    ViewData["Title"] = "System Architecture | Admin";
+}
+
+<div class="row mt-4 animate-slide-up">
+    <!-- Sidebar -->
+    <div class="col-lg-3 mb-4">
+        <div class="card card-modern p-4 text-center border-0 border-bottom border-danger border-4">
+            <div class="rounded-circle bg-dark border border-secondary d-flex align-items-center justify-content-center mx-auto mb-3 shadow" style="width: 80px; height: 80px;">
+                <i class="fa-solid fa-shield-halved fs-1 text-danger"></i>
+            </div>
+            <h5 class="fw-bold text-danger">Root Administrator</h5>
+            <p class="text-muted small">@User.Identity?.Name</p>
+            <hr class="border-secondary opacity-25">
+            <div class="d-grid gap-2 text-start">
+                <a href="/Admin/Dashboard" class="btn btn-modern fw-bold text-start d-block w-100 text-decoration-none"><i class="fa-solid fa-chart-pie w-20 text-center me-2"></i>Overview System</a>
+                <a href="/Admin/ManageProducts" class="btn btn-modern-outline fw-bold text-start border-0 text-white d-block w-100 text-decoration-none"><i class="fa-solid fa-box w-20 text-center me-2 text-muted"></i>Manage Products</a>
+                <a href="/Admin/Categories" class="btn btn-modern-outline fw-bold text-start border-0 text-white d-block w-100 text-decoration-none"><i class="fa-solid fa-layer-group w-20 text-center me-2 text-muted"></i>Categories</a>
+                <a href="/Admin/Users" class="btn btn-modern-outline fw-bold text-start border-0 text-white d-block w-100 text-decoration-none"><i class="fa-solid fa-users-gear w-20 text-center me-2 text-muted"></i>User Accounts</a>
+                <a href="/Admin/Orders" class="btn btn-modern-outline fw-bold text-start border-0 text-white d-block w-100 text-decoration-none"><i class="fa-solid fa-truck-fast w-20 text-center me-2 text-muted"></i>Manage Orders</a>
+                <a href="/Account/Logout" class="btn btn-outline-danger mt-3 fw-bold"><i class="fa-solid fa-right-from-bracket w-20 text-center me-2"></i>Exit Interface</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-lg-9">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold text-white"><i class="fa-solid fa-gauge-high me-2 text-primary"></i>Live Metrics</h3>
+            <a href="/Admin/AddProduct" class="btn btn-modern fw-bold px-4"><i class="fa-solid fa-plus me-2"></i>Add Product</a>
+        </div>
+        
+        <!-- Stats Widgets -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-3">
+                <div class="card card-modern p-4 text-center border-0 border-bottom border-4 border-primary">
+                    <div class="text-primary mb-2" style="text-shadow: 0 0 15px rgba(99,102,241,0.5);"><i class="fa-solid fa-sack-dollar fs-1"></i></div>
+                    <h3 class="fw-bold mb-0 text-white">$@Model.TotalSales.ToString("F2")</h3>
+                    <span class="text-muted small text-uppercase">Total Sales</span>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card card-modern p-4 text-center border-0 border-bottom border-4 border-success">
+                    <div class="text-success mb-2" style="text-shadow: 0 0 15px rgba(34,197,94,0.5);"><i class="fa-solid fa-cart-flatbed fs-1"></i></div>
+                    <h3 class="fw-bold mb-0 text-white">@Model.OrdersCount</h3>
+                    <span class="text-muted small text-uppercase">Orders Count</span>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card card-modern p-4 text-center border-0 border-bottom border-4 border-warning">
+                    <div class="text-warning mb-2" style="text-shadow: 0 0 15px rgba(245,158,11,0.5);"><i class="fa-solid fa-users fs-1"></i></div>
+                    <h3 class="fw-bold mb-0 text-white">@Model.UsersCount</h3>
+                    <span class="text-muted small text-uppercase">Users Count</span>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card card-modern p-4 text-center border-0 border-bottom border-4 border-danger">
+                    <div class="text-danger mb-2" style="text-shadow: 0 0 15px rgba(239,68,68,0.5);"><i class="fa-solid fa-chart-line fs-1"></i></div>
+                    <h3 class="fw-bold mb-0 text-white">+@Model.RevenueGrowthPercentage%</h3>
+                    <span class="text-muted small text-uppercase">Revenue Growth</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Chart -->
+        <div class="card card-modern border-0 p-4 mb-5">
+            <h5 class="fw-bold mb-4 text-white">Revenue Overview (Last 6 Months)</h5>
+            <div style="height: 300px;">
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+
+        <!-- System Tables -->
+        <div class="card card-modern border-0">
+            <div class="card-header bg-transparent border-0 pt-4 pb-0 px-4 d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold mb-0 text-white">Products Database</h5>
+                <input class="form-control form-control-modern form-control-sm w-25" placeholder="Search Database...">
+            </div>
+            <div class="card-body p-4">
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover align-middle bg-transparent mb-0">
+                        <thead class="text-muted small text-uppercase border-bottom border-secondary">
+                            <tr>
+                                <th class="bg-transparent text-muted">Name</th>
+                                <th class="bg-transparent text-muted">Category</th>
+                                <th class="bg-transparent text-muted">Price</th>
+                                <th class="bg-transparent text-muted">Stock</th>
+                                <th class="bg-transparent text-muted text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="border-secondary opacity-75">
+                            @if (Model.RecentProducts != null && Model.RecentProducts.Any())
+                            {
+                                int i = 1;
+                                foreach (var p in Model.RecentProducts)
+                                {
+                                    <tr>
+                                        <td class="fw-bold text-white bg-transparent">@p.Name</td>
+                                        <td class="bg-transparent"><span class="badge bg-secondary">@(p.Category?.Name ?? "General")</span></td>
+                                        <td class="fw-bold text-success bg-transparent">$@p.Price.ToString("F2")</td>
+                                        <td class="bg-transparent"><i class="fa-solid fa-boxes-stacked me-2 @(i%2==0 ? "text-success" : "text-warning")"></i> @(i*15) Units</td>
+                                        <td class="text-end bg-transparent">
+                                            <button class="btn btn-sm btn-outline-primary border-0"><i class="fa-solid fa-pencil"></i></button>
+                                            <button class="btn btn-sm btn-outline-danger border-0"><i class="fa-solid fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                    i++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('revenueChart').getContext('2d');
+        
+        let gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, 'rgba(99, 102, 241, 0.5)');   
+        gradient.addColorStop(1, 'rgba(99, 102, 241, 0.0)');
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'],
+                datasets: [{
+                    label: 'Revenue ($)',
+                    data: [25000, 31000, 48000, 39000, 41000, 45200],
+                    borderColor: '#6366f1',
+                    backgroundColor: gradient,
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#ffffff',
+                    pointBorderColor: '#6366f1',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { display: false, color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } },
+                    y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } }
+                }
+            }
+        });
+    </script>
+}

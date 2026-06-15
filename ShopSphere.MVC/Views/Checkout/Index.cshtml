@@ -1,0 +1,204 @@
+@model ShopSphere.MVC.Models.CartViewModel
+@{
+    ViewData["Title"] = "Secure Checkout";
+}
+
+<div class="row justify-content-center mt-4 mb-5 animate-slide-up">
+    <div class="col-lg-10">
+        
+        <!-- Stepper UI -->
+        <div class="card card-modern border-0 p-4 mb-5 text-center position-relative overflow-hidden">
+            <div class="position-absolute top-50 start-0 w-100 border-top border-secondary opacity-25 z-0 translate-middle-y"></div>
+            <div class="row position-relative z-1 g-0">
+                <div class="col-4">
+                    <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2 fw-bold shadow-lg" style="width: 40px; height: 40px;"><i class="fa-solid fa-check"></i></div>
+                    <span class="small fw-bold text-success">Customer Info</span>
+                </div>
+                <div class="col-4">
+                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2 fw-bold shadow-lg" style="width: 40px; height: 40px;">2</div>
+                    <span class="small fw-bold text-white">Payment & Shipping</span>
+                </div>
+                <div class="col-4">
+                    <div class="bg-dark text-muted rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2 fw-bold border border-secondary" style="width: 40px; height: 40px;">3</div>
+                    <span class="small fw-bold text-muted">Review Order</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-5">
+            <!-- Checkout Form -->
+            <div class="col-lg-7">
+                <h3 class="fw-bold text-white mb-4"><i class="fa-solid fa-truck text-primary fs-3 me-2 align-middle"></i>بيانات العميل والشحن</h3>
+                
+                <div class="card card-modern border-0 p-4 mb-4">
+                    <form id="checkoutForm">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small fw-bold text-uppercase">اسم العميل بالكامل <span class="text-danger">*</span></label>
+                            <input type="text" id="custName" class="form-control form-control-modern py-2" placeholder="أحمد محمد" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted small fw-bold text-uppercase">البريد الإلكتروني <span class="text-danger">*</span></label>
+                            <input type="email" id="custEmail" class="form-control form-control-modern py-2" placeholder="ahmed@example.com" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted small fw-bold text-uppercase">عنوان الشحن بالتفصيل <span class="text-danger">*</span></label>
+                            <input type="text" id="custAddress" class="form-control form-control-modern py-2" placeholder="القاهرة، مدينة نصر، شارع عباس العقاد" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label text-muted small fw-bold text-uppercase">رقم الهاتف للتواصل <span class="text-danger">*</span></label>
+                            <input type="text" id="custPhone" class="form-control form-control-modern py-2" placeholder="0123456789" required>
+                        </div>
+
+                        <h4 class="fw-bold text-white mb-3 mt-4"><i class="fa-solid fa-cash-register text-primary me-2 align-middle"></i>طريقة الدفع</h4>
+                        
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <div class="card card-modern p-3 border-secondary border-opacity-50" style="cursor: pointer; background: rgba(255,255,255,0.02);" onclick="selectPaymentMethod('CreditCard')">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="paymentMethodRadio" id="payCredit" value="CreditCard" checked>
+                                        <label class="form-check-label text-white fw-bold ms-2" for="payCredit" style="cursor: pointer;">
+                                            <i class="fa-solid fa-credit-card text-primary me-1"></i> دفع بالفيزا
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card card-modern p-3 border-secondary border-opacity-50" style="cursor: pointer; background: rgba(255,255,255,0.02);" onclick="selectPaymentMethod('CashOnDelivery')">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="paymentMethodRadio" id="payCOD" value="CashOnDelivery">
+                                        <label class="form-check-label text-white fw-bold ms-2" for="payCOD" style="cursor: pointer;">
+                                            <i class="fa-solid fa-truck-ramp-box text-success me-1"></i> الدفع عند الاستلام (COD)
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="creditCardDetails">
+                            <h5 class="fw-bold text-white mb-3 mt-4"><i class="fa-solid fa-credit-card text-primary me-2 align-middle"></i>بيانات البطاقة (توضيحية)</h5>
+                            <div class="mb-3">
+                                <label class="form-label text-muted small fw-bold text-uppercase">اسم صاحب البطاقة</label>
+                                <input type="text" class="form-control form-control-modern py-2" placeholder="John Doe">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-muted small fw-bold text-uppercase">رقم الكارت</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-0"><i class="fa-solid fa-credit-card text-muted"></i></span>
+                                    <input type="text" class="form-control form-control-modern ps-0 py-2" placeholder="1234 5678 9012 3456">
+                                </div>
+                            </div>
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label class="form-label text-muted small fw-bold text-uppercase">تاريخ الانتهاء</label>
+                                    <input type="text" class="form-control form-control-modern py-2 text-center" placeholder="MM/YY">
+                                </div>
+                                <div class="col-md-6 mt-3 mt-md-0">
+                                    <label class="form-label text-muted small fw-bold text-uppercase">CVC</label>
+                                    <input type="text" class="form-control form-control-modern py-2 text-center" placeholder="123">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid mt-5">
+                            <button id="payBtn" type="button" class="btn btn-modern btn-lg fw-bold shadow-glow" onclick="processPayment()"><i class="fa-solid fa-lock me-2"></i> تأكيد الطلب والدفع - $@(Model?.Total.ToString("F2") ?? "0.00")</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Summary Review -->
+            <div class="col-lg-5">
+                <div class="card card-modern border-0 p-4 sticky-top" style="top: 100px;">
+                    <h5 class="fw-bold text-white mb-4">ملخص الطلب</h5>
+                    @if (Model != null && Model.Items.Any())
+                    {
+                        foreach (var item in Model.Items)
+                        {
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="@(!string.IsNullOrEmpty(item.ImageUrl) ? item.ImageUrl : "https://plus.unsplash.com/premium_photo-1679513691474-73102089c117?q=80&w=800&auto=format&fit=crop")" class="rounded me-3 opacity-75 object-fit-cover" width="50" height="50" alt="@item.ProductName">
+                                <div>
+                                    <h6 class="fw-bold mb-0 text-white">@item.ProductName</h6>
+                                    <small class="text-muted">الكمية: @item.Quantity | الإجمالي: $@item.Total.ToString("F2")</small>
+                                </div>
+                            </div>
+                        }
+                    }
+                    
+                    <hr class="border-secondary opacity-25 mb-4">
+                    
+                    <div class="d-flex justify-content-between text-white fw-bold fs-5">
+                        <span>إجمالي الفاتورة</span>
+                        <span class="text-gradient">$@(Model?.Total.ToString("F2") ?? "0.00")</span>
+                    </div>
+                    <small class="d-block text-muted text-center mt-4"><i class="fa-solid fa-shield-halved me-1 text-success"></i> بوابة دفع آمنة ومشفرة بالكامل.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function selectPaymentMethod(method) {
+            if (method === 'CreditCard') {
+                document.getElementById('payCredit').checked = true;
+                document.getElementById('creditCardDetails').style.display = 'block';
+                document.getElementById('payBtn').innerHTML = '<i class="fa-solid fa-lock me-2"></i> تأكيد الطلب والدفع - $@(Model?.Total.ToString("F2") ?? "0.00")';
+            } else {
+                document.getElementById('payCOD').checked = true;
+                document.getElementById('creditCardDetails').style.display = 'none';
+                document.getElementById('payBtn').innerHTML = '<i class="fa-solid fa-truck me-2 text-warning"></i> تأكيد الطلب والدفع عند الاستلام - $@(Model?.Total.ToString("F2") ?? "0.00")';
+            }
+        }
+
+        async function processPayment() {
+            // التحقق من الحقول المطلوبة بشكل سريع وبسيط
+            const name = document.getElementById('custName').value.trim();
+            const email = document.getElementById('custEmail').value.trim();
+            const address = document.getElementById('custAddress').value.trim();
+            const phone = document.getElementById('custPhone').value.trim();
+
+            if (!name || !email || !address || !phone) {
+                showToast('خطأ', 'يرجى ملء جميع الحقول المطلوبة المميزة بنجمة (*)', 'error');
+                return;
+            }
+
+            const paymentMethod = document.querySelector('input[name="paymentMethodRadio"]:checked').value;
+
+            const btn = document.getElementById('payBtn');
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin me-2"></i> جاري تأكيد الطلب...';
+            btn.disabled = true;
+            
+            showToast('جاري العمل', 'يتم الآن معالجة بيانات الطلب...', 'primary');
+            
+            try {
+                const response = await fetch('/Checkout/ProcessCheckout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        customerName: name,
+                        customerEmail: email,
+                        shippingAddress: address,
+                        customerPhone: phone,
+                        paymentMethod: paymentMethod,
+                        notes: paymentMethod === 'CashOnDelivery' ? "الدفع عند الاستلام (COD)" : "دفع بالبطاقة الائتمانية"
+                    })
+                });
+                
+                if (response.ok) {
+                    showToast('تم بنجاح', 'تم تسجيل طلبك بنجاح وجاري تحويلك...', 'success');
+                    setTimeout(() => window.location.href='/Checkout/Success', 1500);
+                } else {
+                    showToast('خطأ', 'فشل في إتمام الطلب أو السلة فارغة.', 'error');
+                    btn.innerHTML = originalHtml;
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                showToast('خطأ', 'حدث خطأ في الاتصال بالشبكة', 'error');
+                btn.innerHTML = originalHtml;
+                btn.disabled = false;
+            }
+        }
+    </script>
+}

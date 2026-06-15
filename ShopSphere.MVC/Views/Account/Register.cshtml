@@ -1,0 +1,74 @@
+@{
+    ViewData["Title"] = "Create Account";
+}
+
+<div class="row justify-content-center align-items-center my-5">
+    <div class="col-md-9 col-lg-6">
+        <div class="card card-modern border-0 p-5">
+            <div class="text-center mb-4">
+                <a href="/" class="text-decoration-none">
+                    <h2 class="text-gradient fw-bold mb-3"><i class="fa-solid fa-gem me-2"></i>ShopSphere</h2>
+                </a>
+                <h4 class="fw-bold text-dark">Join the Community</h4>
+                <p class="text-muted">Create an account to start shopping our premium collection</p>
+            </div>
+            
+            <form asp-action="Register" asp-controller="Account" method="post">
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label text-muted small fw-bold">First Name</label>
+                        <input type="text" class="form-control form-control-modern" placeholder="John" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-muted small fw-bold">Last Name</label>
+                        <input type="text" class="form-control form-control-modern" placeholder="Doe" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-bold">Email Address</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-0"><i class="fa-solid fa-envelope text-muted"></i></span>
+                        <input type="email" name="Email" class="form-control form-control-modern ps-0" placeholder="name@example.com" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-bold">Phone Number</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-0"><i class="fa-solid fa-phone text-muted"></i></span>
+                        <input type="tel" class="form-control form-control-modern ps-0" placeholder="+1 (555) 000-0000">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-bold">Account Type (Role)</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-0"><i class="fa-solid fa-user-shield text-muted"></i></span>
+                        <select name="Role" class="form-select form-control-modern ps-0 rounded-end" aria-label="Select Role" required>
+                            <option value="User" selected>Regular User</option>
+                            <option value="Admin">Administrator</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label text-muted small fw-bold">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-0"><i class="fa-solid fa-lock text-muted"></i></span>
+                        <input type="password" class="form-control form-control-modern ps-0" placeholder="Create a strong password" required>
+                    </div>
+                </div>
+                
+                <div class="form-check mb-4">
+                    <input class="form-check-input" type="checkbox" id="termsAgree" required>
+                    <label class="form-check-label text-muted small" for="termsAgree">
+                        I agree to the <a href="#" class="text-primary">Terms of Service</a> & <a href="#" class="text-primary">Privacy Policy</a>
+                    </label>
+                </div>
+                
+                <div class="d-grid mb-4">
+                    <button type="submit" class="btn btn-modern btn-lg fw-bold">Create Account <i class="fa-solid fa-user-plus ms-2"></i></button>
+                </div>
+                
+                <p class="text-center text-muted small mb-0">Already have an account? <a asp-action="Login" class="text-primary text-decoration-none fw-bold">Sign In</a></p>
+            </form>
+        </div>
+    </div>
+</div>

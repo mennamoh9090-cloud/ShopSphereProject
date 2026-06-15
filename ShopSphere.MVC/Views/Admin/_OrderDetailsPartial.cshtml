@@ -1,0 +1,55 @@
+@model ShopSphere.MVC.Models.OrderViewModel
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <h6 class="text-muted fw-bold text-uppercase small">Customer Information</h6>
+        <p class="text-white mb-1"><i class="fa-solid fa-user me-2 text-info"></i>@Model.UserId</p>
+        <p class="text-white mb-0"><i class="fa-solid fa-calendar me-2 text-warning"></i>@Model.CreatedAt.ToString("f")</p>
+    </div>
+    <div class="col-md-6 text-md-end mt-3 mt-md-0">
+        <h6 class="text-muted fw-bold text-uppercase small">Order Summary</h6>
+        <p class="text-success fw-bold fs-5 mb-1">$@Model.TotalPrice.ToString("F2")</p>
+        <span class="badge @(Model.PaymentStatus == "Paid" ? "bg-success" : "bg-warning text-dark")">@Model.PaymentStatus</span>
+    </div>
+</div>
+<h6 class="text-muted fw-bold text-uppercase small mb-3">Order Items</h6>
+<div class="table-responsive">
+    <table class="table table-dark table-hover bg-transparent">
+        <thead class="border-secondary opacity-50 small">
+            <tr>
+                <th class="bg-transparent">Product</th>
+                <th class="bg-transparent text-center">Price</th>
+                <th class="bg-transparent text-center">Qty</th>
+                <th class="bg-transparent text-end">Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Items != null && Model.Items.Any())
+            {
+                foreach (var item in Model.Items)
+                {
+                    <tr class="border-secondary border-opacity-25">
+                        <td class="bg-transparent text-white align-middle">
+                            <div class="d-flex align-items-center">
+                                <img src="@(!string.IsNullOrEmpty(item.ImageUrl) ? item.ImageUrl : "https://plus.unsplash.com/premium_photo-1679513691474-73102089c117?q=80&w=800&auto=format&fit=crop")" width="40" height="40" class="rounded me-3 object-fit-cover" alt="@item.ProductName" />
+                                <span class="fw-bold">@item.ProductName</span>
+                            </div>
+                        </td>
+                        <td class="bg-transparent text-center text-muted align-middle">$@item.Price.ToString("F2")</td>
+                        <td class="bg-transparent text-center fw-bold align-middle">@item.Quantity</td>
+                        <td class="bg-transparent text-end text-success fw-bold align-middle">$@((item.Price * item.Quantity).ToString("F2"))</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr><td colspan="4" class="text-center text-muted bg-transparent py-3">No products found in this order.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+<script>
+    if(document.getElementById('orderModalTitleText')) {
+        document.getElementById('orderModalTitleText').innerText = 'Order #ORD-@Model.Id.ToString("D5") Details';
+    }
+</script>

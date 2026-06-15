@@ -1,0 +1,44 @@
+@model IEnumerable<ShopSphere.MVC.Models.CategoryViewModel>
+@{
+    var parent = ViewBag.ParentCategory as ShopSphere.MVC.Models.CategoryViewModel;
+    ViewData["Title"] = parent != null ? parent.Name : "Explore Categories";
+}
+
+<!-- Page Header -->
+<div class="row mt-4 mb-5 animate-slide-up">
+    <div class="col-12 text-center">
+        <h2 class="display-5 fw-bold text-gradient mb-3">Explore @(parent?.Name ?? "Subcategories")</h2>
+        <a href="/Category" class="btn btn-modern-outline fw-bold px-4 border-0 text-white mt-2"><i class="fa-solid fa-arrow-left me-2"></i>Back to Main Categories</a>
+    </div>
+</div>
+
+<!-- Subcategory Grid -->
+<div class="row g-4 mb-5 animate-slide-up" style="animation-delay: 0.1s;">
+    @if (Model != null && Model.Any())
+    {
+        foreach (var category in Model)
+        {
+            var imageUrl = category.GetDisplayImageUrl();
+            
+            <div class="col-lg-4 col-md-6 text-center">
+                <a href="/Product?categoryId=@category.Id" class="text-decoration-none">
+                    <div class="card card-modern border-0 overflow-hidden position-relative" style="height: 350px;">
+                        <img src="@imageUrl" class="w-100 h-100 object-fit-cover opacity-75 hover-opacity-100 transition-opacity" style="transition: transform 0.4s ease;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                        <div class="position-absolute bottom-0 start-0 w-100 p-4" style="background: linear-gradient(to top, rgba(15,23,42,0.9), transparent);">
+                            <h4 class="fw-bold text-white mb-1">@category.Name</h4>
+                            <span class="text-primary small fw-bold">Explore Content <i class="fa-solid fa-arrow-right ms-1"></i></span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12 text-center text-muted py-5 mt-4">
+            <i class="fa-solid fa-folder-open fs-1 text-secondary mb-3 opacity-50"></i>
+            <h5>No subcategories available here.</h5>
+            <a href="@(parent != null ? $"/Product?categoryId={parent.Id}" : "/Product")" class="btn btn-modern px-4 mt-3 rounded-pill fw-bold">View Category Products</a>
+        </div>
+    }
+</div>
